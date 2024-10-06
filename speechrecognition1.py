@@ -2,40 +2,39 @@ import os
 import speech_recognition as sr
 from gtts import gTTS
 from playsound import playsound
-import cohere  # Import the Cohere library
+import cohere  
 
-# Initialize the Cohere API
-cohere_client = cohere.Client('ZuDC2r6ZPbcv5gPno4vyDCVbLTq5on2RLJQ8ip0o')  # Replace with your Cohere API key
+
+cohere_client = cohere.Client('ZuDC2r6ZPbcv5gPno4vyDCVbLTq5on2RLJQ8ip0o')  
 
 def speak_text(text):
-    print(f"Converting to speech: {text}")  # Debugging line
+    print(f"Converting to speech: {text}") 
     try:
         tts = gTTS(text=text, lang='en', slow=False)
         filename = "response.mp3"
         tts.save(filename)
-        print(f"Saved audio file: {filename}")  # Debugging line
+        print(f"Saved audio file: {filename}") 
         
-        # Check if the file was created
+        
         if os.path.exists(filename):
-            print(f"File {filename} created successfully.")  # Debugging line
+            print(f"File {filename} created successfully.")  
             
-            # Play the audio file
+            
             playsound(filename)
 
-            os.remove(filename)  # Remove the file after playing it
-            print("Speech output successful!")  # Debugging line
+            os.remove(filename) 
+            print("Speech output successful!")  
         else:
-            print(f"File {filename} was not created.")  # Debugging line
+            print(f"File {filename} was not created.") 
     except Exception as e:
-        print(f"Error in Text-to-Speech: {e}")  # Debugging line
+        print(f"Error in Text-to-Speech: {e}") 
 
 def get_cohere_response(prompt):
     try:
-        # Send recognized text to Cohere for text generation
         response = cohere_client.generate(
-            model='command-xlarge-nightly',  # Specify the model
+            model='command-xlarge-nightly',  
             prompt=prompt,
-            max_tokens=150,  # Limit the token count for responses
+            max_tokens=150,  
         )
         return response.generations[0].text.strip()
     except Exception as e:
@@ -58,11 +57,11 @@ def main():
             recognized_text = recognizer.recognize_google(audio)
             print(f"Recognized: {recognized_text}")
             
-            # Get the response from Cohere's model
+            
             cohere_response = get_cohere_response(recognized_text)
             print(f"Cohere Response: {cohere_response}")
 
-            # Convert the response to speech
+            
             speak_text(cohere_response)
 
         except sr.UnknownValueError:
